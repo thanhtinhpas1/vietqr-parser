@@ -4,7 +4,7 @@ const EmvcoTagLength = 2
 
 type FieldID string
 
-var (
+const (
 	FIELD_ID_Version             FieldID = "00"
 	FIELD_ID_Method              FieldID = "01"
 	Field_ID_Visa                FieldID = "02"
@@ -26,8 +26,12 @@ var (
 	FIELD_ID_Crc                 FieldID = "63"
 )
 
-var (
+const (
 	FIELD_ID_Subtag_Id      FieldID = "00"
 	FIELD_ID_Subtag_Data    FieldID = "01"
 	FIELD_ID_Subtag_Service FieldID = "02"
+)
+
+const (
+	FIELD_ID_Subtag_Addition_Description FieldID = "08"
 )
