@@ -155,7 +155,9 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 		tipAndFeeTypeTag.String(),
 		tipAndFeeAmountTag.String(),
 		tipAndFeePercentTag.String(),
+		string(constants.FIELD_ID_Crc),
+		"04",
 	}, "")
 
-	return fmt.Sprintf("%s%s", qrContent, NewTag(constants.FIELD_ID_Crc, utils.GetCRC(qrContent))), nil
+	return fmt.Sprintf("%s%s", qrContent, utils.GetCRC(qrContent)), nil
 }

@@ -21,8 +21,8 @@ func main() {
 
 	qrPay, err := qrpay.ParseQRPay(qr)
 	if err != nil {
-		fmt.Printf("parse VietQR ERROR: %v", err)
-		return
+		fmt.Printf("parse VietQR ERROR: %v\n", err)
+		os.Exit(1)
 	}
 
 	fmt.Printf("Amount: %v\n", qrPay.Amount)
