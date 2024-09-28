@@ -14,7 +14,7 @@ import (
 
 func main() {
 	/** BASIC QR */
-	basicQRPay := qrpay.BuildQRPay(20000, constants.Bin_VCB, "0881000458086")
+	basicQRPay := qrpay.BuildQRPay(constants.Bin_VCB, "0881000458086")
 	qr, err := basicQRPay.GenerateQRCode()
 	if err != nil {
 		fmt.Println("generate qr code failed", err)
@@ -33,11 +33,15 @@ func main() {
 	data, _ := json.Marshal(qrPay)
 	fmt.Println(string(data))
 
+	fmt.Println()
+	fmt.Println("================================================")
+	fmt.Println()
+
 	/** COMPLEX QR*/
 	complexQRPay := qrpay.BuildQRPay(
-		50000,
 		constants.Bin_VCB,
 		"0881000458086",
+		qrpay.WithAmount(69000),
 		qrpay.WithCurrencyCode(fmt.Sprintf("%d", countries.Singapore.Currency())),
 		qrpay.WithDescription("Thanh toán mua sữa"),
 		qrpay.WithTipAndFeeType(models.PredefinedTip),
@@ -51,10 +55,6 @@ func main() {
 			),
 		),
 	)
-
-	fmt.Println()
-	fmt.Println("================================================")
-	fmt.Println()
 
 	qr, err = complexQRPay.GenerateQRCode()
 	if err != nil {

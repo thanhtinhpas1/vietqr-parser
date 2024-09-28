@@ -247,7 +247,10 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	currencyTag := NewTag(constants.FIELD_ID_Currency, qp.CurrencyCode)
 
 	// TAG 54
-	amountTag := NewTag(constants.FIELD_ID_Amount, cast.ToString(qp.Amount))
+	var amountTag TagValue
+	if qp.Amount > 0 {
+		amountTag = NewTag(constants.FIELD_ID_Amount, cast.ToString(qp.Amount))
+	}
 
 	// => START TAG 55, 56, 57: TIP OR CONVENIENCE INDICATOR
 	tipAndFeeTypeTag := NewTag(constants.FIELD_ID_Tip_And_Fee_Type, string(qp.TipAndFeeType))

@@ -135,7 +135,7 @@ func BuildMerchantInfo(merchantName string, opts ...MerchantOptionFn) *models.Me
 	return &mcInfo
 }
 
-func BuildQRPay(amount int64, bankBin string, accountNumber string, opts ...OptionFn) *QRPay {
+func BuildQRPay(bankBin string, accountNumber string, opts ...OptionFn) *QRPay {
 	napasProvider := models.NapasProvider{
 		Id:         constants.NapasIdentifier,
 		BankBin:    bankBin,
@@ -146,7 +146,6 @@ func BuildQRPay(amount int64, bankBin string, accountNumber string, opts ...Opti
 	qrPay := QRPay{
 		Version:      constants.NapasDefaultVersion,
 		CurrencyCode: constants.Currency_VND,
-		Amount:       amount,
 	}
 
 	for _, optFn := range opts {
@@ -162,7 +161,7 @@ func BuildQRPay(amount int64, bankBin string, accountNumber string, opts ...Opti
 	}
 
 	var initiationMethod = models.InitiationMethodStatic
-	if amount > 0 {
+	if qrPay.Amount > 0 {
 		initiationMethod = models.InitiationMethodDynamic
 	}
 
