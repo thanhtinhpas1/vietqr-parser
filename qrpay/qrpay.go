@@ -8,9 +8,9 @@ import (
 	"github.com/biter777/countries"
 	"github.com/spf13/cast"
 
-	"github.com/thanhtinhpas1/emvco_qr/pkg/constants"
-	"github.com/thanhtinhpas1/emvco_qr/pkg/models"
-	"github.com/thanhtinhpas1/emvco_qr/pkg/utils"
+	"github.com/thanhtinhpas1/vietqr_parser/pkg/constants"
+	"github.com/thanhtinhpas1/vietqr_parser/pkg/models"
+	"github.com/thanhtinhpas1/vietqr_parser/pkg/utils"
 )
 
 type TagValue struct {

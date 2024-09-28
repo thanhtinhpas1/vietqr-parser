@@ -1,4 +1,4 @@
-module github.com/thanhtinhpas1/emvco_qr
+module github.com/thanhtinhpas1/vietqr_parser
 
 go 1.20
 

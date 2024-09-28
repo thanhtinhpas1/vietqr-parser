@@ -1,8 +1,8 @@
 package qrpay
 
 import (
-	"github.com/thanhtinhpas1/emvco_qr/pkg/constants"
-	"github.com/thanhtinhpas1/emvco_qr/pkg/models"
+	"github.com/thanhtinhpas1/vietqr_parser/pkg/constants"
+	"github.com/thanhtinhpas1/vietqr_parser/pkg/models"
 )
 
 type OptionFn func(qrPay *QRPay)
