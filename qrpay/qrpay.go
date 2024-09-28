@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/biter777/countries"
 	"github.com/spf13/cast"
 
 	"github.com/thanhtinhpas1/emvco_qr/pkg/constants"
@@ -41,7 +42,7 @@ type QRPay struct {
 	// Merchant Info to fill in, such as bank bin acquirer, beneficiary number, etc
 	MerchantInfo *models.MerchantInfo `json:"merchant_info"`
 
-	// Currency code of QR
+	// Currency code of QR, refenrece to https://en.wikipedia.org/wiki/ISO_4217
 	CurrencyCode string `json:"currency_code"`
 
 	// Amount of money which will be transferred
@@ -112,10 +113,30 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 		return "", err
 	}
 
+	// TAG 00
 	versionTag := NewTag(constants.FIELD_ID_Version, qp.Version)
+
+	// TAG 01
 	initiationMethodTag := NewTag(constants.FIELD_ID_Method, string(qp.InitiationMethod))
+
+	// => START TAG 38 VIETQR
+	napasIdentifyTag := NewTag(constants.FIELD_ID_Subtag_Id, constants.NapasIdentifier)
+	napasMethodTag := NewTag(constants.FIELD_ID_Subtag_Service, string(qp.MerchantInfo.NapasProvider.Method))
+
+	bankBinTag := NewTag(constants.FIELD_ID_Subtag_Id, qp.MerchantInfo.NapasProvider.BankBin)
+	transferToTag := NewTag(constants.FIELD_ID_Subtag_Data, qp.MerchantInfo.NapasProvider.TransferTo)
+	accountInfoTag := NewTag(constants.FIELD_ID_Subtag_Data, fmt.Sprintf("%s%s", bankBinTag, transferToTag))
+
+	vietQRTag := NewTag(constants.FIELD_ID_VietQR, fmt.Sprintf("%s%s%s", napasIdentifyTag, accountInfoTag, napasMethodTag))
+	// => END TAG 38 VIETQR
+
+	// TAG 53
 	currencyTag := NewTag(constants.FIELD_ID_Currency, qp.CurrencyCode)
+
+	// TAG 54
 	amountTag := NewTag(constants.FIELD_ID_Amount, cast.ToString(qp.Amount))
+
+	// => START TAG 55, 56, 57: TIP OR CONVENIENCE INDICATOR
 	tipAndFeeTypeTag := NewTag(constants.FIELD_ID_Tip_And_Fee_Type, string(qp.TipAndFeeType))
 
 	var (
@@ -128,7 +149,26 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 			tipAndFeePercentTag = NewTag(constants.FIELD_ID_Tip_And_Fee_Percent, cast.ToString(qp.TipAndFeePercent))
 		}
 	}
+	// => END TAG 55, 56, 57
 
+	// TAG 58
+	var countryTag TagValue
+	if len(qp.MerchantInfo.CountryCode) > 0 {
+		countryTag = NewTag(constants.FIELD_ID_Country_Code, qp.MerchantInfo.CountryCode)
+	} else {
+		countryTag = NewTag(constants.FIELD_ID_Country_Code, cast.ToString(countries.Vietnam.Info().Code))
+	}
+
+	// TAG 59
+	merchantName := NewTag(constants.FIELD_ID_Merchant_Name, qp.MerchantInfo.Name)
+
+	// TAG 60
+	cityTag := NewTag(constants.FIELD_ID_Merchant_City, qp.MerchantInfo.City)
+
+	// 61
+	postalTag := NewTag(constants.FIELD_ID_Postal_Code, qp.MerchantInfo.PostalCode)
+
+	// TAG 62: SUB TAG 08 => DESCRIPTION
 	var descriptionTag TagValue
 	var additionTag TagValue
 	if len(qp.Description) > 0 {
@@ -136,28 +176,35 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 		additionTag = NewTag(constants.FIELD_ID_Additional_Data, descriptionTag.String())
 	}
 
-	napasIdentifyTag := NewTag(constants.FIELD_ID_Subtag_Id, constants.NapasIdentifier)
-	napasMethodTag := NewTag(constants.FIELD_ID_Subtag_Service, string(qp.MerchantInfo.NapasProvider.Method))
+	// TAG 64: MERCHANT INFORMATION - Language Template
+	// TDB
 
-	bankBinTag := NewTag(constants.FIELD_ID_Subtag_Id, qp.MerchantInfo.NapasProvider.BankBin)
-	transferToTag := NewTag(constants.FIELD_ID_Subtag_Data, qp.MerchantInfo.NapasProvider.TransferTo)
-	accountInfoTag := NewTag(constants.FIELD_ID_Subtag_Data, fmt.Sprintf("%s%s", bankBinTag, transferToTag))
+	// TAG 65 -> 79: RFU for EMVCo (register by EMVCo)
+	// TDB
 
-	vietQRTag := NewTag(constants.FIELD_ID_VietQR, fmt.Sprintf("%s%s%s", napasIdentifyTag, accountInfoTag, napasMethodTag))
+	// TAG 80 -> 99:  Unreserved Template (register for future usage)
+	// TDB
 
 	qrContent := strings.Join([]string{
 		versionTag.String(),
 		initiationMethodTag.String(),
 		vietQRTag.String(),
-		amountTag.String(),
 		currencyTag.String(),
-		additionTag.String(),
+		amountTag.String(),
 		tipAndFeeTypeTag.String(),
 		tipAndFeeAmountTag.String(),
 		tipAndFeePercentTag.String(),
+		countryTag.String(),
+		merchantName.String(),
+		cityTag.String(),
+		postalTag.String(),
+		additionTag.String(),
 		string(constants.FIELD_ID_Crc),
 		"04",
 	}, "")
 
-	return fmt.Sprintf("%s%s", qrContent, utils.GetCRC(qrContent)), nil
+	// TAG 64: CRC (Cyclic Redundancy Check)
+	tag63Str := utils.GetCRC(qrContent)
+
+	return fmt.Sprintf("%s%s", qrContent, tag63Str), nil
 }

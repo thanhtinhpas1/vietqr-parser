@@ -51,7 +51,7 @@ var (
 	PredefinedTip TipAndFeeType = "02" // Predefined tip amount will be determined by in tag 56
 )
 
-type MerchantProvider struct {
+type NapasProvider struct {
 	Id         string      `json:"id"`
 	BankBin    string      `json:"bank_bin"`
 	TransferTo string      `json:"transfer_to"`
@@ -63,7 +63,7 @@ type MerchantInfo struct {
 	City          string                         `json:"city"`
 	CountryCode   string                         `json:"country_code"` // Reference to: https://developer.mastercard.com/card-issuance/documentation/code-and-formats/iso-country-and-currency-codes/
 	PostalCode    string                         `json:"postal_code"`  // Zip code
-	NapasProvider *MerchantProvider              `json:"napas_provider"`
+	NapasProvider *NapasProvider                 `json:"napas_provider"`
 	MasterAccount string                         `json:"master_account"`
 	VisaAccount   string                         `json:"visa_account"`
 	JcbAccount    string                         `json:"jcb_account"`
@@ -83,7 +83,7 @@ func (mc *MerchantInfo) Validate() error {
 	return nil
 }
 
-func (np *MerchantProvider) Validate() error {
+func (np *NapasProvider) Validate() error {
 	if len(np.Id) == 0 {
 		return NapasProviderIdEmptyError
 	}

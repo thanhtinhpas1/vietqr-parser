@@ -114,8 +114,8 @@ func parseMerchantInfo(emvcoMap map[constants.FieldID]string) *models.MerchantIn
 	return &merchantInfo
 }
 
-func parseNapasProvider(napasTag string) models.MerchantProvider {
-	var napasProvider models.MerchantProvider
+func parseNapasProvider(napasTag string) models.NapasProvider {
+	var napasProvider models.NapasProvider
 	napasEmvcoMap := parseEmvcoTag(napasTag)
 
 	// 00

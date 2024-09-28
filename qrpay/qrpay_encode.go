@@ -7,6 +7,8 @@ import (
 
 type OptionFn func(qrPay *QRPay)
 
+type MerchantOptionFn func(mc *models.MerchantInfo)
+
 func WithVersion(version string) OptionFn {
 	return func(qrPay *QRPay) {
 		qrPay.Version = version
@@ -61,16 +63,102 @@ func WithDescription(description string) OptionFn {
 	}
 }
 
-func BuildBasicQRPay(amount int64, bankBin string, accountNumber string, opts ...OptionFn) *QRPay {
-	napasProvider := models.MerchantProvider{
+func WithMerchantName(name string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.Name = name
+	}
+}
+
+func WithMerchantCity(city string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.City = city
+	}
+}
+
+func WithMerchantCountryCode(countryCode string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.CountryCode = countryCode
+	}
+}
+
+func WithMerchantPostalCode(postalCode string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.PostalCode = postalCode
+	}
+}
+
+func WithNapasProvider(napasProvider *models.NapasProvider) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.NapasProvider = napasProvider
+	}
+}
+
+func WithMasterAccount(masterAccount string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.MasterAccount = masterAccount
+	}
+}
+
+func WithVisaAccount(visaAcc string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.VisaAccount = visaAcc
+	}
+}
+
+func WithJcbAccount(jcbAccount string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.JcbAccount = jcbAccount
+	}
+}
+
+func WithUpiAccount(upiAcc string) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.UpiAccount = upiAcc
+	}
+}
+
+func WithCategoryCode(categoryCode constants.MerchantCategoryCode) MerchantOptionFn {
+	return func(mc *models.MerchantInfo) {
+		mc.CategoryCode = categoryCode
+	}
+}
+
+func BuildMerchantInfo(merchantName string, opts ...MerchantOptionFn) *models.MerchantInfo {
+	mcInfo := models.MerchantInfo{
+		Name: merchantName,
+	}
+
+	for _, optFn := range opts {
+		optFn(&mcInfo)
+	}
+
+	return &mcInfo
+}
+
+func BuildQRPay(amount int64, bankBin string, accountNumber string, opts ...OptionFn) *QRPay {
+	napasProvider := models.NapasProvider{
 		Id:         constants.NapasIdentifier,
 		BankBin:    bankBin,
 		TransferTo: accountNumber,
 		Method:     models.NapasMethodAccountTransfer,
 	}
 
-	merchantInfo := models.MerchantInfo{
-		NapasProvider: &napasProvider,
+	qrPay := QRPay{
+		Version:      constants.NapasDefaultVersion,
+		CurrencyCode: constants.Currency_VND,
+		Amount:       amount,
+	}
+
+	for _, optFn := range opts {
+		optFn(&qrPay)
+	}
+
+	if qrPay.MerchantInfo != nil {
+		qrPay.MerchantInfo.NapasProvider = &napasProvider
+	} else {
+		qrPay.MerchantInfo = &models.MerchantInfo{
+			NapasProvider: &napasProvider,
+		}
 	}
 
 	var initiationMethod = models.InitiationMethodStatic
@@ -78,17 +166,7 @@ func BuildBasicQRPay(amount int64, bankBin string, accountNumber string, opts ..
 		initiationMethod = models.InitiationMethodDynamic
 	}
 
-	qrPay := QRPay{
-		Version:          constants.NapasDefaultVersion,
-		InitiationMethod: initiationMethod,
-		CurrencyCode:     constants.VietnameseCurrency,
-		Amount:           amount,
-		MerchantInfo:     &merchantInfo,
-	}
-
-	for _, optFn := range opts {
-		optFn(&qrPay)
-	}
+	qrPay.InitiationMethod = initiationMethod
 
 	return &qrPay
 }
