@@ -35,18 +35,15 @@ Using this tool to build QR https://vi.qr-code-generator.com/ we will have a bas
 
 ![Basic VietQR](docs/basic_qr.png)
 
-When scan with bank application
+When scanning with bank application
 
 ![Basic VietQR Scan](docs/basic_qr_scan.jpg)
 
 ## Example for build more complex QR
-
-<details>
-<summary>Complex QR Example</summary>
+### Complex QR Example
 
 With more information like amount, description, city, country, postal, addition info such as bill number, store number, etc
 
-Also support Visa, Master, UPI as well.
 ```go
 	complexQRPay := qrpay.BuildQRPay(
 		constants.Bin_VCB,
@@ -92,7 +89,6 @@ Also support Visa, Master, UPI as well.
 
 When scaning with bank application, note that also we set currency code as SGD but whether the bank application will respect that or not will depend on its decision.
 ![complex_qr_scan](docs/complex_qr_scan.png)
-</details>
 
 ## VietQR Structure
 <details>
@@ -128,6 +124,7 @@ Some specific acronyms are available:
 | Postal Code | 61 | 10 | O | Postal Code
 | Additional Data Field Template | 62 | 99 | C | Contains information such as description, bill number, store number, loyalty number, etc
 | CRC | 63 | 04 | M | Check sum for QR, make sure not be modified
+
 Please reference to Napas docs on the begin of this documentation for more tag like RFU, Unreversed, etc.
 
 **Notes:** thanks for package *github.com/biter777/countries* we have enough information about Currency and Country Code.
