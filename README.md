@@ -1,5 +1,7 @@
 # QRPay EMVCo for VietQR
-A Go package to help build and parse EMVCo VietQR easier with few lines only. This package was based on format of Napas about [VietQR](https://vietqr.net/portal-service/download/documents/QR_Format_T&C_v1.0_VN_092021.pdf) to build QR Code at VietNam. Bank applications will follow this standard to parse info of EMVCo QR and fill in all necessary information to IBFT transfer to account.
+A Go package to help build and parse EMVCo VietQR easier with few lines only. This package was based on format of Napas about [VietQR](https://vietqr.net/portal-service/download/documents/QR_Format_T&C_v1.0_VN_092021.pdf) which called **EMVCo** to build QR Code at VietNam. Bank applications will follow this standard to parse info of EMVCo QR and fill in all necessary information to IBFT transfer to account.
+
+Beside that, this package also supports build some more complex use cases of QR such as Visa, Master, UPI, build QR with amount, description, tip and fee as well, ...etc
 
 ## Examples for build basic QR Code
 Build QR with some basic information like beneficiary account, bank name
@@ -31,18 +33,18 @@ basicQRPay := qrpay.BuildQRPay(constants.Bin_VCB, "0881000458086")
    **/
 ```
 
-Using this tool to build QR https://vi.qr-code-generator.com/ we will have a basic QR
+Please using this tool https://vi.qr-code-generator.com/ and paste the QR code to generating. We will have the QR as below which accepted by all VietNam bank applications that allow users input amont of money and make the transfer complete.
 
 ![Basic VietQR](docs/basic_qr.png)
 
-When scanning with bank application
+The IBFT transfer screen of TPBank when scanning above QR Code:
 
-![Basic VietQR Scan](docs/basic_qr_scan.jpg)
+<img src="docs/basic_qr_scan.jpg" alt="basic-scan=qr" width="50%" height="50%" />
 
 ## Example for build more complex QR
 ### Complex QR Example
 
-With more information like amount, description, city, country, postal, addition info such as bill number, store number, etc
+With more information like amount, currency code, description, tip and fee, merchant category code, merchant city, postal code, ...etc we can using code as below:
 
 ```go
 	complexQRPay := qrpay.BuildQRPay(
@@ -89,11 +91,10 @@ With more information like amount, description, city, country, postal, addition 
 
 When scaning with bank application, note that also we set currency code as SGD but whether the bank application will respect that or not will depend on its decision.
 
-![complex_qr_scan](docs/complex_qr_scan.png)
+<img src="docs/complex_qr_scan.png" alt="complex-scan=qr" width="50%" height="50%" />
 
 ## VietQR Structure
-<details>
-<summary>QRPay structure</summary>
+### QRPay structure
 
 ### Napas standard
 EMVCo standard works with [**Tag length value**](https://en.wikipedia.org/wiki/Type%E2%80%93length%E2%80%93value) pattern, example a tag with `000200` will have structure as:
@@ -188,7 +189,6 @@ type QRPay struct {
 	AdditionData map[models.AdditionDataType]string `json:"addition_data"`
 }
 ```
-</details>
 
 ## Summary
 We already support UPI, Visa, Master so please reference to `models.MerchantInfo` for more details, fill in data and process to build QR. Any further concerns, please create a MR.
