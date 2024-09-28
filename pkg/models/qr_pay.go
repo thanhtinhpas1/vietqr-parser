@@ -23,6 +23,27 @@ var (
 	NapasProviderInfoTransferToEmptyError     = errors.New("napas provider account/card number must be specified")
 	NapasProviderCardNumberEmptyError         = errors.New("napas provider card number must be specified")
 	NapasProviderMethodError                  = errors.New("napas provider method was invalid")
+	ExceededMaxLengthError                    = errors.New("data has exceeded maximum length")
+)
+
+const (
+	VersionMaxLength                 = 2
+	InitiationMethodMaxLength        = 2
+	MerchantAccountMaxLength         = 99
+	MerchantCategoryCodeMaxLength    = 4
+	TransactionCurrencyMaxLength     = 3
+	AmountMaxLength                  = 13
+	TipOrConvenienceMaxLength        = 2
+	FeeFixedMaxLength                = 13
+	FeePercentageMaxLength           = 5
+	CountryCodeMaxLength             = 2
+	MerchantNameMaxLength            = 25
+	MerchantCityMaxLength            = 15
+	PostalCodeMaxLength              = 10
+	AdditionDataFieldMaxLength       = 99
+	MerchantInfoTemplateMaxLength    = 99
+	SubAdditionDataMaxLength         = 25
+	SubAdditionConsumerDataMaxLength = 3
 )
 
 type InitiationMethod string

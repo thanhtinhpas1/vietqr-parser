@@ -1,6 +1,7 @@
 package qrpay
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -69,6 +70,112 @@ func (qrPay *QRPay) Validate() error {
 		return models.QrPayWasNilError
 	}
 
+	// normalize before validation
+	if qrPay.MerchantInfo != nil {
+		qrPay.MerchantInfo.Name = utils.ConvertStringToAlphabet(qrPay.MerchantInfo.Name)
+		qrPay.MerchantInfo.City = utils.ConvertStringToAlphabet(qrPay.MerchantInfo.City)
+	}
+
+	if len(qrPay.Description) > 0 {
+		qrPay.Description = utils.ConvertStringToAlphabet(qrPay.Description)
+	}
+
+	if len(qrPay.AdditionData) > 0 {
+		purposeOfTrans, exists := qrPay.AdditionData[models.PurposeOfTransactionType]
+		if exists {
+			qrPay.AdditionData[models.PurposeOfTransactionType] = utils.ConvertStringToAlphabet(purposeOfTrans)
+		}
+	} else {
+		qrPay.AdditionData = make(map[models.AdditionDataType]string)
+		qrPay.AdditionData[models.PurposeOfTransactionType] = qrPay.Description
+	}
+
+	if len(qrPay.Version) > models.VersionMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("version max length %d", models.VersionMaxLength))
+	}
+
+	if len(qrPay.InitiationMethod) > models.InitiationMethodMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("initiation method max length %d", models.InitiationMethodMaxLength))
+	}
+
+	if qrPay.MerchantInfo != nil && len(qrPay.MerchantInfo.CategoryCode) > models.MerchantCategoryCodeMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("category code max length %d", models.MerchantCategoryCodeMaxLength))
+	}
+
+	if len(qrPay.CurrencyCode) > models.TransactionCurrencyMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("currency code max length %d", models.TransactionCurrencyMaxLength))
+	}
+
+	if len(cast.ToString(qrPay.Amount)) > models.AmountMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("amount max length %d", models.AmountMaxLength))
+	}
+
+	if len(cast.ToString(qrPay.TipAndFeeType)) > models.TipOrConvenienceMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("tip or convenience type max length %d", models.TipOrConvenienceMaxLength))
+	}
+
+	if len(cast.ToString(qrPay.TipAndFeeAmount)) > models.FeeFixedMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("tip and fee amount max length %d", models.FeeFixedMaxLength))
+	}
+
+	if len(cast.ToString(qrPay.TipAndFeePercent)) > models.FeePercentageMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("tip and fee percentage max length %d", models.FeePercentageMaxLength))
+	}
+
+	if qrPay.MerchantInfo != nil && len(cast.ToString(qrPay.MerchantInfo.CountryCode)) > models.CountryCodeMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("country code max length %d", models.CountryCodeMaxLength))
+	}
+
+	if qrPay.MerchantInfo != nil && len(cast.ToString(qrPay.MerchantInfo.Name)) > models.MerchantNameMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("merchant name max length %d", models.MerchantNameMaxLength))
+	}
+
+	if qrPay.MerchantInfo != nil && len(cast.ToString(qrPay.MerchantInfo.City)) > models.MerchantCityMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("merchant city max length %d", models.MerchantCityMaxLength))
+	}
+
+	if qrPay.MerchantInfo != nil && len(cast.ToString(qrPay.MerchantInfo.PostalCode)) > models.PostalCodeMaxLength {
+		return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("postal code max length %d", models.PostalCodeMaxLength))
+	}
+
+	if len(qrPay.AdditionData) > 0 {
+		if len(qrPay.AdditionData[models.BillNumberType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("bill number max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.MobileNumberType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("mobile number max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.StoreLabelType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("store label max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.LoyaltyNumberType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("loyalty number max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.ReferenceLabelType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("reference label max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.CustomerLabelType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("customer label max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.TerminalLabelType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("terminal max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.PurposeOfTransactionType]) > models.SubAdditionDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("purpose of transaction max length %d", models.SubAdditionDataMaxLength))
+		}
+
+		if len(qrPay.AdditionData[models.ConsumerDataType]) > models.SubAdditionConsumerDataMaxLength {
+			return errors.Join(models.ExceededMaxLengthError, fmt.Errorf("consumer data request max length %d", models.SubAdditionConsumerDataMaxLength))
+		}
+	}
+
 	if qrPay.Amount < 0 {
 		return models.AmountMustPostiveError
 	}
@@ -128,7 +235,13 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	accountInfoTag := NewTag(constants.FIELD_ID_Subtag_Data, fmt.Sprintf("%s%s", bankBinTag, transferToTag))
 
 	vietQRTag := NewTag(constants.FIELD_ID_VietQR, fmt.Sprintf("%s%s%s", napasIdentifyTag, accountInfoTag, napasMethodTag))
+
+	if len(vietQRTag.String()) > models.MerchantAccountMaxLength+2 {
+		return "", errors.Join(models.ExceededMaxLengthError, fmt.Errorf("vietqr tag max length %d", models.MerchantAccountMaxLength))
+	}
 	// => END TAG 38 VIETQR
+
+	merchantCategoryTag := NewTag(constants.FIELD_ID_Category, string(qp.MerchantInfo.CategoryCode))
 
 	// TAG 53
 	currencyTag := NewTag(constants.FIELD_ID_Currency, qp.CurrencyCode)
@@ -156,7 +269,7 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	if len(qp.MerchantInfo.CountryCode) > 0 {
 		countryTag = NewTag(constants.FIELD_ID_Country_Code, qp.MerchantInfo.CountryCode)
 	} else {
-		countryTag = NewTag(constants.FIELD_ID_Country_Code, cast.ToString(countries.Vietnam.Info().Code))
+		countryTag = NewTag(constants.FIELD_ID_Country_Code, cast.ToString(countries.Vietnam.Info().Alpha2))
 	}
 
 	// TAG 59
@@ -165,16 +278,35 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	// TAG 60
 	cityTag := NewTag(constants.FIELD_ID_Merchant_City, qp.MerchantInfo.City)
 
-	// 61
+	// TAG 61
 	postalTag := NewTag(constants.FIELD_ID_Postal_Code, qp.MerchantInfo.PostalCode)
 
-	// TAG 62: SUB TAG 08 => DESCRIPTION
-	var descriptionTag TagValue
-	var additionTag TagValue
-	if len(qp.Description) > 0 {
-		descriptionTag = NewTag(constants.FIELD_ID_Subtag_Addition_Description, qp.Description)
-		additionTag = NewTag(constants.FIELD_ID_Additional_Data, descriptionTag.String())
+	// => START TAG 62: Addition SUB TAG 08 => DESCRIPTION <=> Purpose of transaction
+	billNumberTag := NewTag(constants.FieldID(string(models.BillNumberType)), qp.AdditionData[models.BillNumberType])
+	mobileNumberTag := NewTag(constants.FieldID(string(models.MobileNumberType)), qp.AdditionData[models.MobileNumberType])
+	storeLabelTag := NewTag(constants.FieldID(string(models.StoreLabelType)), qp.AdditionData[models.StoreLabelType])
+	loyaltyTag := NewTag(constants.FieldID(string(models.LoyaltyNumberType)), qp.AdditionData[models.LoyaltyNumberType])
+	referenceTag := NewTag(constants.FieldID(string(models.ReferenceLabelType)), qp.AdditionData[models.ReferenceLabelType])
+	customerLabelTag := NewTag(constants.FieldID(string(models.CustomerLabelType)), qp.AdditionData[models.CustomerLabelType])
+	terminalLabelTag := NewTag(constants.FieldID(string(models.TerminalLabelType)), qp.AdditionData[models.TerminalLabelType])
+	purposeOfTransaction := NewTag(constants.FieldID(string(models.PurposeOfTransactionType)), qp.AdditionData[models.PurposeOfTransactionType])
+	consumerDataRequestTag := NewTag(constants.FieldID(string(models.ConsumerDataType)), qp.AdditionData[models.ConsumerDataType])
+	strBuilder := strings.Builder{}
+	strBuilder.WriteString(fmt.Sprintf("%s%s%s%s%s%s%s%s%s", billNumberTag, mobileNumberTag, storeLabelTag, loyaltyTag, referenceTag, customerLabelTag, terminalLabelTag, purposeOfTransaction, consumerDataRequestTag))
+
+	// build for rfu, unreversed fields
+	for key, val := range qp.AdditionData {
+		if cast.ToInt(key) <= 10 {
+			continue
+		}
+
+		newTag := NewTag(constants.FieldID(key), val)
+		strBuilder.WriteString(newTag.String())
 	}
+
+	additionTag := NewTag(constants.FIELD_ID_Additional_Data, strBuilder.String())
+
+	// => END TAG 62
 
 	// TAG 64: MERCHANT INFORMATION - Language Template
 	// TDB
@@ -189,6 +321,7 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 		versionTag.String(),
 		initiationMethodTag.String(),
 		vietQRTag.String(),
+		merchantCategoryTag.String(),
 		currencyTag.String(),
 		amountTag.String(),
 		tipAndFeeTypeTag.String(),

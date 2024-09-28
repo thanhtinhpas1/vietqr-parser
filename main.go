@@ -38,8 +38,8 @@ func main() {
 		50000,
 		constants.Bin_VCB,
 		"0881000458086",
-		qrpay.WithCurrencyCode(countries.Singapore.Currency().String()),
-		qrpay.WithDescription("Thanh toán cho cửa hàng sữa"),
+		qrpay.WithCurrencyCode(fmt.Sprintf("%d", countries.Singapore.Currency())),
+		qrpay.WithDescription("Thanh toán mua sữa"),
 		qrpay.WithTipAndFeeType(models.PredefinedTip),
 		qrpay.WithTipAndFeeAmount(1000),
 		qrpay.WithMerchantInfo(
@@ -52,6 +52,10 @@ func main() {
 		),
 	)
 
+	fmt.Println()
+	fmt.Println("================================================")
+	fmt.Println()
+
 	qr, err = complexQRPay.GenerateQRCode()
 	if err != nil {
 		fmt.Printf("Error generating QR %v\n", err)
@@ -59,4 +63,14 @@ func main() {
 	}
 
 	fmt.Printf("ComplexQR: %s\n", qr)
+
+	qrPay, err = qrpay.ParseQRPay(qr)
+	if err != nil {
+		fmt.Printf("parse VietQR ERROR: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Amount: %v\n", qrPay.Amount)
+	data, _ = json.Marshal(qrPay)
+	fmt.Println(string(data))
 }
