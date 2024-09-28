@@ -88,6 +88,7 @@ With more information like amount, description, city, country, postal, addition 
 ![complex qr](docs/complex_qr.png)
 
 When scaning with bank application, note that also we set currency code as SGD but whether the bank application will respect that or not will depend on its decision.
+
 ![complex_qr_scan](docs/complex_qr_scan.png)
 
 ## VietQR Structure
