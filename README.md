@@ -128,7 +128,7 @@ Some specific acronyms are available:
 
 Please reference to Napas docs on the begin of this documentation for more tag like RFU, Unreversed, etc.
 
-**Notes:** thanks for package *github.com/biter777/countries* we have enough information about Currency and Country Code.
+**Notes:** thanks for package https://github.com/biter777/countries we have enough information about Currency and Country Code.
 
 ### Go structure
 
