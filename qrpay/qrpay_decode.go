@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cast"
 
-	"github.com/thanhtinhpas1/vietqr_parser/pkg/constants"
-	"github.com/thanhtinhpas1/vietqr_parser/pkg/models"
-	validator "github.com/thanhtinhpas1/vietqr_parser/pkg/validators"
+	"github.com/thanhtinhpas1/vietqr-parser/pkg/constants"
+	"github.com/thanhtinhpas1/vietqr-parser/pkg/models"
+	validator "github.com/thanhtinhpas1/vietqr-parser/pkg/validators"
 )
 
 func ParseQRPay(qrCode string) (*QRPay, error) {

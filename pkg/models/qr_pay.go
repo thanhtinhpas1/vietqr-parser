@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 
-	"github.com/thanhtinhpas1/vietqr_parser/pkg/constants"
+	"github.com/thanhtinhpas1/vietqr-parser/pkg/constants"
 )
 
 var (

@@ -7,9 +7,9 @@ import (
 
 	"github.com/biter777/countries"
 
-	"github.com/thanhtinhpas1/vietqr_parser/pkg/constants"
-	"github.com/thanhtinhpas1/vietqr_parser/pkg/models"
-	"github.com/thanhtinhpas1/vietqr_parser/qrpay"
+	"github.com/thanhtinhpas1/vietqr-parser/pkg/constants"
+	"github.com/thanhtinhpas1/vietqr-parser/pkg/models"
+	"github.com/thanhtinhpas1/vietqr-parser/qrpay"
 )
 
 func main() {

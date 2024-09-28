@@ -1,4 +1,4 @@
-module github.com/thanhtinhpas1/vietqr_parser
+module github.com/thanhtinhpas1/vietqr-parser
 
 go 1.20
 
