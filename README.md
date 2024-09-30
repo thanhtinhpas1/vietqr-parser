@@ -1,5 +1,5 @@
-# QRPay EMVCo for VietQR
-A Go package to help build and parse EMVCo VietQR easier with few lines only. This package was based on format of Napas about [VietQR](https://vietqr.net/portal-service/download/documents/QR_Format_T&C_v1.0_VN_092021.pdf) which called **EMVCo** to build QR Code at VietNam. Bank applications will follow this standard to parse info of EMVCo QR and fill in all necessary information to IBFT transfer to account.
+# VietQR Golang
+A Golang package to help build and parse EMVCo VietQR easier with few lines only. This package was based on format of Napas about [VietQR](https://vietqr.net/portal-service/download/documents/QR_Format_T&C_v1.0_VN_092021.pdf) which called **EMVCo** to build QR Code at VietNam. Bank applications will follow this standard to parse info of EMVCo QR and fill in all necessary information to IBFT transfer to account.
 
 Beside that, this package also supports build some more complex use cases of QR such as Visa, Master, UPI, build QR with amount, description, tip and fee as well, ...etc
 
