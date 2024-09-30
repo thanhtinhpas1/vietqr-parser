@@ -226,6 +226,30 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	// TAG 01
 	initiationMethodTag := NewTag(constants.FIELD_ID_Method, string(qp.InitiationMethod))
 
+	// TAG 02: Visa account
+	var visaTag TagValue
+	if qp.MerchantInfo != nil && len(qp.MerchantInfo.VisaAccount) > 0 {
+		visaTag = NewTag(constants.Field_ID_Visa, qp.MerchantInfo.VisaAccount)
+	}
+
+	/// TAG 04: Master account
+	var masterTag TagValue
+	if qp.MerchantInfo != nil && len(qp.MerchantInfo.MasterAccount) > 0 {
+		masterTag = NewTag(constants.Field_ID_Master, qp.MerchantInfo.MasterAccount)
+	}
+
+	// TAG 13: JCB Account
+	var jcbTag TagValue
+	if qp.MerchantInfo != nil && len(qp.MerchantInfo.JcbAccount) > 0 {
+		jcbTag = NewTag(constants.Field_ID_JCB, qp.MerchantInfo.JcbAccount)
+	}
+
+	// TAG 15: UPI
+	var upiTag TagValue
+	if qp.MerchantInfo != nil && len(qp.MerchantInfo.UpiAccount) > 0 {
+		upiTag = NewTag(constants.Field_ID_UPI, qp.MerchantInfo.UpiAccount)
+	}
+
 	// => START TAG 38 VIETQR
 	napasIdentifyTag := NewTag(constants.FIELD_ID_Subtag_Id, constants.NapasIdentifier)
 	napasMethodTag := NewTag(constants.FIELD_ID_Subtag_Service, string(qp.MerchantInfo.NapasProvider.Method))
@@ -323,6 +347,10 @@ func (qp *QRPay) GenerateQRCode() (string, error) {
 	qrContent := strings.Join([]string{
 		versionTag.String(),
 		initiationMethodTag.String(),
+		visaTag.String(),
+		masterTag.String(),
+		jcbTag.String(),
+		upiTag.String(),
 		vietQRTag.String(),
 		merchantCategoryTag.String(),
 		currencyTag.String(),
